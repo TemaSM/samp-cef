@@ -20,7 +20,7 @@ mod utils;
 use crate::server::Server;
 
 const INIT_TIMEOUT: Duration = Duration::from_secs(5);
-const PORT_OFFSET: u16 = 2;
+const PORT_OFFSET: u16 = 100;
 
 pub enum Event {
     EmitEvent {
@@ -51,7 +51,7 @@ impl CefPlugin {
             crate::utils::parse_config_field("bind").unwrap_or_else(|| "0.0.0.0".parse().unwrap());
 
         let port = crate::utils::parse_config_field("port").unwrap_or_else(|| 7777);
-        let addr = SocketAddr::from((ip, port + PORT_OFFSET));
+        let addr = SocketAddr::from((ip, port - PORT_OFFSET));
         let server = Server::new(addr);
 
         info!("Bind CEF server on {:?}", addr);

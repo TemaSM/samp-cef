@@ -338,10 +338,12 @@ impl CefPlugin {
     }
 
     fn add_to_await_list(&mut self, player_id: i32) {
+        trace!("add_to_await_list({})", player_id);
         self.await_connect.insert(player_id, Instant::now());
     }
 
     fn remove_from_await_list(&mut self, player_id: i32) -> bool {
+        trace!("remove_from_await_list({})", player_id);
         self.await_connect.remove(&player_id).is_some()
     }
 }

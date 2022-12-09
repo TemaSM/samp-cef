@@ -28,7 +28,7 @@ use crossbeam_channel::{Receiver, Sender};
 
 use detour::GenericDetour;
 
-const CEF_SERVER_PORT_OFFSET: u16 = 2;
+const CEF_SERVER_PORT_OFFSET: u16 = 100;
 pub const CEF_PLUGIN_VERSION: i32 = 0x00_01_00;
 
 static mut APP: Option<App> = None;
@@ -212,7 +212,7 @@ impl App {
 
             log::trace!("SAMP: CNetGame address: {}", addr);
 
-            addr.set_port(addr.port() + CEF_SERVER_PORT_OFFSET);
+            addr.set_port(addr.port() - CEF_SERVER_PORT_OFFSET);
 
             log::trace!(
                 "Event::Connect({}). Elapsed {:?}",

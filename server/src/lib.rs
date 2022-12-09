@@ -19,7 +19,7 @@ mod utils;
 
 use crate::server::Server;
 
-const INIT_TIMEOUT: Duration = Duration::from_secs(5);
+const INIT_TIMEOUT: Duration = Duration::from_secs(30);
 const PORT_OFFSET: u16 = 100;
 
 pub enum Event {
@@ -338,10 +338,12 @@ impl CefPlugin {
     }
 
     fn add_to_await_list(&mut self, player_id: i32) {
+        trace!("add_to_await_list({})", player_id);
         self.await_connect.insert(player_id, Instant::now());
     }
 
     fn remove_from_await_list(&mut self, player_id: i32) -> bool {
+        trace!("remove_from_await_list({})", player_id);
         self.await_connect.remove(&player_id).is_some()
     }
 }
@@ -401,7 +403,7 @@ impl SampPlugin for CefPlugin {
             }
         }
 
-        self.notify_timeout();
+        // self.notify_timeout();
     }
 }
 

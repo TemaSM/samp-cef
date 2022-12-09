@@ -129,6 +129,9 @@ impl Server {
     /// обработка пакета авторизации
     fn handle_auth(&mut self, peer: PeerId, _packet: packets::RequestJoin) {
         let client = self.clients.get_mut(&peer).unwrap(); // safe
+        let player_id = client.id();
+        
+        trace!("handle_auth({})", player_id);
 
         let response = packets::JoinResponse {
             success: true,
@@ -136,8 +139,10 @@ impl Server {
         };
 
         client.set_state(crate::client::State::Connected);
+        
+        trace!("send(Event::PlayerConnected({}))", player_id);
 
-        let _ = self.event_tx.send(Event::PlayerConnected(client.id()));
+        let _ = self.event_tx.send(Event::PlayerConnected(player_id));
 
         let _ = try_into_packet(response).map(|bytes| {
             let packet = Packet::new(peer, bytes);
@@ -148,6 +153,8 @@ impl Server {
     fn handle_emit_event(&mut self, peer: PeerId, packet: packets::EmitEvent) {
         let client = self.clients.get_mut(&peer).unwrap(); // safe
         let player_id = client.id();
+        
+        trace!("handle_emit_event({})", player_id);
 
         if let Some(args) = &packet.args {
             let event = packet.event_name.to_string();
@@ -218,6 +225,7 @@ impl Server {
     // samp server side
 
     pub fn allow_connection(&mut self, player_id: i32, addr: IpAddr) {
+        trace!("allow_connection({})", player_id);
         if let Some(peer) = self.peer_by_id(player_id) {
             self.clients.remove(&peer);
         }
@@ -226,6 +234,7 @@ impl Server {
     }
 
     pub fn remove_connection(&mut self, player_id: i32, addr: Option<IpAddr>) {
+        trace!("remove_connection({})", player_id);
         let peer = self.peer_by_id(player_id);
 
         if let Some(peer) = peer {
